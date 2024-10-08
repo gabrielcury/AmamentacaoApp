@@ -74,16 +74,20 @@ function loadLastFeeding() {
         type: 'GET',
         dataType: 'json',
         success: function (data) {
-            if (data) {
-                const localDate = data.date ? new Date(data.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '-';
+            console.log('Dados recebidos:', data);  // Para verificar os dados recebidos
+
+            if (data && data.date) {
+                const localDate = new Date(data.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
                 updateInterface(data.lado, localDate);
 
                 if (data.remaining_time > 0) {
                     startCountdown(data.remaining_time);
                 } else {
-                    $("#countdown").text('Tempo esgotado ou nenhum registro.');
+                    $("#countdown").text('Tempo esgotado!');
                 }
             } else {
+                $("#last-side").text('Nenhum');
+                $("#last-date").text('-');
                 $("#countdown").text('Nenhum registro encontrado.');
             }
         },
@@ -93,6 +97,12 @@ function loadLastFeeding() {
         }
     });
 }
+
+function updateInterface(side, date) {
+    $("#last-side").text(side);
+    $("#last-date").text(date);
+}
+
 
 
 function startCountdown(seconds) {
