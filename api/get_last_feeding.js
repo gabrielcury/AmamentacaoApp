@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Define o caminho do arquivo db.txt
-const dbFilePath = path.join(process.cwd(), 'db.txt');
+const dbFilePath = path.join('/tmp', 'db.txt');
 
 export default function handler(req, res) {
     if (req.method === 'GET') {
