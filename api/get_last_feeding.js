@@ -6,9 +6,13 @@ const dbFilePath = path.join('/tmp', 'db.txt');
 
 export default function handler(req, res) {
     if (req.method === 'GET') {
+        // Desativar o cache para garantir que sempre uma nova resposta seja enviada
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Expires', '0');
+        res.setHeader('Pragma', 'no-cache');
+
         // Verifica se o arquivo db.txt existe
         if (!fs.existsSync(dbFilePath)) {
-            // Se o arquivo não existir, retorna null
             console.log("Arquivo não encontrado:", dbFilePath);
             return res.status(200).json(null);
         }
@@ -16,7 +20,6 @@ export default function handler(req, res) {
         // Lê o arquivo db.txt
         fs.readFile(dbFilePath, 'utf8', (err, data) => {
             if (err) {
-                // Erro ao ler o arquivo
                 console.error("Erro ao ler o arquivo:", err);
                 return res.status(500).json({ message: 'Erro ao ler o banco de dados', error: err.message });
             }
@@ -26,7 +29,6 @@ export default function handler(req, res) {
             try {
                 lastFeeding = JSON.parse(data);
             } catch (parseError) {
-                // Erro ao fazer parse do JSON
                 console.error("Erro ao interpretar os dados do arquivo:", parseError);
                 return res.status(500).json({ message: 'Erro ao interpretar os dados do arquivo', error: parseError.message });
             }
