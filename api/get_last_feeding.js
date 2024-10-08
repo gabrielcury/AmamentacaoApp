@@ -36,4 +36,20 @@ export default function handler(req, res) {
             // Calcula a diferença de tempo entre a última alimentação e o tempo atual
             const lastFeedingTime = new Date(lastFeeding.date);
             const currentTime = new Date();
-            const timeDiffere
+            const timeDifference = (currentTime - lastFeedingTime) / 1000;
+
+            // Calcula o tempo restante até a próxima alimentação (3 horas de intervalo)
+            const remainingTime = Math.max(3 * 60 * 60 - timeDifference, 0);
+
+            // Retorna os dados da última alimentação e o tempo restante
+            res.status(200).json({
+                lado: lastFeeding.side,
+                date: lastFeeding.date,
+                remaining_time: remainingTime
+            });
+        });
+    } else {
+        // Retorna erro 405 se o método não for GET
+        res.status(405).json({ message: 'Método não permitido' });
+    }
+}
