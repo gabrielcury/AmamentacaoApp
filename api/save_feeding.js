@@ -13,10 +13,14 @@ export default function handler(req, res) {
 
         const lastFeeding = { side, date };
 
+        // Log do caminho para garantir que esteja correto
+        console.log("Salvando no caminho:", dbFilePath);
+
         // Escrever no arquivo db.txt
         fs.writeFile(dbFilePath, JSON.stringify(lastFeeding), (err) => {
             if (err) {
-                return res.status(500).json({ message: 'Erro ao salvar os dados' });
+                console.error("Erro ao escrever no arquivo:", err); // Log detalhado do erro
+                return res.status(500).json({ message: 'Erro ao salvar os dados', error: err.message });
             }
 
             res.status(200).json({
