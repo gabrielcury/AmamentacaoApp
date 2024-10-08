@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-// Define o caminho do arquivo db.txt
+// Usando o diretório temporário no Vercel ou outras plataformas com sistema de arquivos somente leitura
 const dbFilePath = path.join('/tmp', 'db.txt');
 
 export default function handler(req, res) {
@@ -9,6 +9,7 @@ export default function handler(req, res) {
         // Verifica se o arquivo db.txt existe
         if (!fs.existsSync(dbFilePath)) {
             // Se o arquivo não existir, retorna null
+            console.log("Arquivo não encontrado:", dbFilePath);
             return res.status(200).json(null);
         }
 
@@ -16,6 +17,7 @@ export default function handler(req, res) {
         fs.readFile(dbFilePath, 'utf8', (err, data) => {
             if (err) {
                 // Erro ao ler o arquivo
+                console.error("Erro ao ler o arquivo:", err);
                 return res.status(500).json({ message: 'Erro ao ler o banco de dados', error: err.message });
             }
 
@@ -25,11 +27,13 @@ export default function handler(req, res) {
                 lastFeeding = JSON.parse(data);
             } catch (parseError) {
                 // Erro ao fazer parse do JSON
+                console.error("Erro ao interpretar os dados do arquivo:", parseError);
                 return res.status(500).json({ message: 'Erro ao interpretar os dados do arquivo', error: parseError.message });
             }
 
             // Verifica se há uma data de alimentação registrada
             if (!lastFeeding.date) {
+                console.log("Nenhum registro de data encontrado.");
                 return res.status(200).json(null);
             }
 
