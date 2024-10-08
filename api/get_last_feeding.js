@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
-// Usando o diretório temporário no Vercel ou outras plataformas com sistema de arquivos somente leitura
+// Usando o diretório temporário no Vercel
 const dbFilePath = path.join('/tmp', 'db.txt');
 
 export default function handler(req, res) {
     if (req.method === 'GET') {
-        // Desativar o cache para garantir que sempre uma nova resposta seja enviada
+        // Desativa o cache para garantir que sempre uma nova resposta seja enviada
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Expires', '0');
         res.setHeader('Pragma', 'no-cache');
@@ -24,7 +24,7 @@ export default function handler(req, res) {
                 return res.status(500).json({ message: 'Erro ao ler o banco de dados', error: err.message });
             }
 
-            // Verifique o conteúdo lido do arquivo
+            // Log do conteúdo lido do arquivo
             console.log("Conteúdo do arquivo lido:", data);
 
             // Parse o conteúdo do arquivo

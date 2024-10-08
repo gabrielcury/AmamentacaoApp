@@ -14,14 +14,14 @@ export default function handler(req, res) {
 
         const lastFeeding = { side, date };
 
-        // Salvar os dados no arquivo no diretório /tmp
+        // Escrevendo os dados no arquivo
         fs.writeFile(dbFilePath, JSON.stringify(lastFeeding), (err) => {
             if (err) {
                 console.error("Erro ao escrever no arquivo:", err);
                 return res.status(500).json({ message: 'Erro ao salvar os dados', error: err.message });
             }
 
-            // Verifique se os dados foram realmente salvos
+            // Verificar o conteúdo do arquivo logo após a escrita
             fs.readFile(dbFilePath, 'utf8', (err, data) => {
                 if (err) {
                     console.error("Erro ao ler o arquivo após salvar:", err);
