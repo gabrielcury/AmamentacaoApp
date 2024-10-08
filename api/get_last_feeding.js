@@ -5,12 +5,12 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY); // 
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: 'https://<your-database-name>.firebaseio.com', // Replace with your database URL
+        databaseURL: 'https://amamentacao.firebaseio.com', // Replace with your database URL
     });
 }
 
 const db = admin.firestore();
-
+ 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
