@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const dbFilePath = path.join(process.cwd(), 'db.txt');
+// Usando o diretório temporário em Vercel ou outras plataformas com sistema de arquivos somente leitura
+const dbFilePath = path.join('/tmp', 'db.txt');
 
 export default function handler(req, res) {
     if (req.method === 'POST') {
@@ -13,13 +14,13 @@ export default function handler(req, res) {
 
         const lastFeeding = { side, date };
 
-        // Log do caminho para garantir que esteja correto
+        // Log do caminho para depuração
         console.log("Salvando no caminho:", dbFilePath);
 
-        // Escrever no arquivo db.txt
+        // Escrever no arquivo no diretório /tmp
         fs.writeFile(dbFilePath, JSON.stringify(lastFeeding), (err) => {
             if (err) {
-                console.error("Erro ao escrever no arquivo:", err); // Log detalhado do erro
+                console.error("Erro ao escrever no arquivo:", err);
                 return res.status(500).json({ message: 'Erro ao salvar os dados', error: err.message });
             }
 
