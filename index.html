@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amamentação Controle</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="manifest" href="/amamentacao/manifest.json">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Registro de Amamentação</h3>
+            </div>
+            <div class="card-body text-center">
+                <img src="capa.jpg" class="img-fluid mb-3" alt="Desenho de uma mulher amamentando">
+                <h5>Selecione o lado oferecido</h5>
+                <button id="btn-esquerdo" class="btn btn-primary m-2">Esquerdo</button>
+                <button id="btn-direito" class="btn btn-primary m-2">Direito</button>
+                <h5 class="mt-4">Último lado oferecido: <span id="last-side">Nenhum</span></h5>
+                <h5>Data e Hora: <span id="last-date">-</span></h5>
+                <h5 class="mt-4">Tempo até próxima amamentação: <span id="countdown">-</span></h5>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+</body>
+</html>
