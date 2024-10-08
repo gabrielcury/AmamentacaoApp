@@ -24,6 +24,9 @@ export default function handler(req, res) {
                 return res.status(500).json({ message: 'Erro ao ler o banco de dados', error: err.message });
             }
 
+            // Verifique o conteúdo lido do arquivo
+            console.log("Conteúdo do arquivo lido:", data);
+
             // Parse o conteúdo do arquivo
             let lastFeeding;
             try {
@@ -35,7 +38,7 @@ export default function handler(req, res) {
 
             // Verifica se há uma data de alimentação registrada
             if (!lastFeeding.date) {
-                console.log("Nenhum registro de data encontrado.");
+                console.log("Nenhuma data de alimentação registrada.");
                 return res.status(200).json(null);
             }
 
