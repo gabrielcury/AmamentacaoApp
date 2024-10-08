@@ -75,21 +75,25 @@ function loadLastFeeding() {
         dataType: 'json',
         success: function (data) {
             if (data) {
-                const localDate = new Date(data.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+                const localDate = data.date ? new Date(data.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '-';
                 updateInterface(data.lado, localDate);
 
                 if (data.remaining_time > 0) {
                     startCountdown(data.remaining_time);
                 } else {
-                    $("#countdown").text('Tempo esgotado!');
+                    $("#countdown").text('Tempo esgotado ou nenhum registro.');
                 }
+            } else {
+                $("#countdown").text('Nenhum registro encontrado.');
             }
         },
         error: function (xhr, status, error) {
             console.error("Erro ao carregar o último registro: " + error);
+            $("#countdown").text('Erro ao carregar dados.');
         }
     });
 }
+
 
 function startCountdown(seconds) {
     if (window.countdownInterval) {
