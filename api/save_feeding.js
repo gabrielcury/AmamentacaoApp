@@ -1,40 +1,38 @@
-import fs from 'fs';
-import path from 'path';
+import admin from 'firebase-admin';
 
-// Usando o diretório temporário no Vercel
-const dbFilePath = path.join('/tmp', 'db.txt');
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
-export default function handler(req, res) {
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://<your-database-name>.firebaseio.com',
+    });
+}
+
+const db = admin.firestore();
+
+export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { side, date } = req.body;
 
         if (!side || !date) {
-            return res.status(400).json({ message: 'Dados incompletos' });
+            return res.status(400).json({ message: 'Incomplete data' });
         }
 
         const lastFeeding = { side, date };
 
-        // Escrevendo os dados no arquivo
-        fs.writeFile(dbFilePath, JSON.stringify(lastFeeding), (err) => {
-            if (err) {
-                console.error("Erro ao escrever no arquivo:", err);
-                return res.status(500).json({ message: 'Erro ao salvar os dados', error: err.message });
-            }
-
-            // Verificar o conteúdo do arquivo logo após a escrita
-            fs.readFile(dbFilePath, 'utf8', (err, data) => {
-                if (err) {
-                    console.error("Erro ao ler o arquivo após salvar:", err);
-                } else {
-                    console.log("Conteúdo do arquivo salvo:", data); // Log para verificar o que foi salvo
-                }
-            });
-
+        try {
+            await db.collection('feedings').doc('lastFeeding').set(lastFeeding);
             res.status(200).json({
                 success: true,
-                message: 'Registro salvo com sucesso',
+                message: 'Record saved successfully',
                 date: lastFeeding.date
             });
-        });
+        } catch (error) {
+            console.error("Error writing to Firestore:", error);
+            return res.status(500).json({ message: 'Error saving data', error: error.message });
+        }
+    } else {
+        res.status(405).json({ message: 'Method not allowed' });
     }
 }

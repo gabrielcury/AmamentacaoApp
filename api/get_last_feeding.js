@@ -1,64 +1,52 @@
-import fs from 'fs';
-import path from 'path';
+import admin from 'firebase-admin';
 
-// Usando o diretório temporário no Vercel
-const dbFilePath = path.join('/tmp', 'db.txt');
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY); // Add your Firebase service account key to environment variables
 
-export default function handler(req, res) {
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://<your-database-name>.firebaseio.com', // Replace with your database URL
+    });
+}
+
+const db = admin.firestore();
+
+export default async function handler(req, res) {
     if (req.method === 'GET') {
-        // Desativa o cache para garantir que sempre uma nova resposta seja enviada
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Expires', '0');
         res.setHeader('Pragma', 'no-cache');
 
-        // Verifica se o arquivo db.txt existe
-        if (!fs.existsSync(dbFilePath)) {
-            console.log("Arquivo não encontrado:", dbFilePath);
-            return res.status(200).json(null);
-        }
-
-        // Lê o arquivo db.txt
-        fs.readFile(dbFilePath, 'utf8', (err, data) => {
-            if (err) {
-                console.error("Erro ao ler o arquivo:", err);
-                return res.status(500).json({ message: 'Erro ao ler o banco de dados', error: err.message });
-            }
-
-            // Log do conteúdo lido do arquivo
-            console.log("Conteúdo do arquivo lido:", data);
-
-            // Parse o conteúdo do arquivo
-            let lastFeeding;
-            try {
-                lastFeeding = JSON.parse(data);
-            } catch (parseError) {
-                console.error("Erro ao interpretar os dados do arquivo:", parseError);
-                return res.status(500).json({ message: 'Erro ao interpretar os dados do arquivo', error: parseError.message });
-            }
-
-            // Verifica se há uma data de alimentação registrada
-            if (!lastFeeding.date) {
-                console.log("Nenhuma data de alimentação registrada.");
+        try {
+            const doc = await db.collection('feedings').doc('lastFeeding').get();
+            if (!doc.exists) {
+                console.log("No data found.");
                 return res.status(200).json(null);
             }
 
-            // Calcula a diferença de tempo entre a última alimentação e o tempo atual
+            const lastFeeding = doc.data();
+            console.log("Last feeding data:", lastFeeding);
+
+            if (!lastFeeding.date) {
+                console.log("No feeding date recorded.");
+                return res.status(200).json(null);
+            }
+
             const lastFeedingTime = new Date(lastFeeding.date);
             const currentTime = new Date();
             const timeDifference = (currentTime - lastFeedingTime) / 1000;
-
-            // Calcula o tempo restante até a próxima alimentação (3 horas de intervalo)
             const remainingTime = Math.max(3 * 60 * 60 - timeDifference, 0);
 
-            // Retorna os dados da última alimentação e o tempo restante
             res.status(200).json({
                 lado: lastFeeding.side,
                 date: lastFeeding.date,
                 remaining_time: remainingTime
             });
-        });
+        } catch (error) {
+            console.error("Error reading from Firestore:", error);
+            return res.status(500).json({ message: 'Error reading from database', error: error.message });
+        }
     } else {
-        // Retorna erro 405 se o método não for GET
-        res.status(405).json({ message: 'Método não permitido' });
+        res.status(405).json({ message: 'Method not allowed' });
     }
 }
