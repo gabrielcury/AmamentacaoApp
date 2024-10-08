@@ -74,9 +74,7 @@ function loadLastFeeding() {
         type: 'GET',
         dataType: 'json',
         success: function (data) {
-            console.log('Dados recebidos:', data);  // Para verificar os dados recebidos
-
-            if (data && data.date) {
+            if (data) {
                 const localDate = new Date(data.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
                 updateInterface(data.lado, localDate);
 
@@ -85,25 +83,13 @@ function loadLastFeeding() {
                 } else {
                     $("#countdown").text('Tempo esgotado!');
                 }
-            } else {
-                $("#last-side").text('Nenhum');
-                $("#last-date").text('-');
-                $("#countdown").text('Nenhum registro encontrado.');
             }
         },
         error: function (xhr, status, error) {
             console.error("Erro ao carregar o último registro: " + error);
-            $("#countdown").text('Erro ao carregar dados.');
         }
     });
 }
-
-function updateInterface(side, date) {
-    $("#last-side").text(side);
-    $("#last-date").text(date);
-}
-
-
 
 function startCountdown(seconds) {
     if (window.countdownInterval) {
