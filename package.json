@@ -1,6 +1,21 @@
 {
+    "name": "your-project-name",
     "version": "1.0.0",
+    "description": "Your project description",
+    "main": "index.js",
+    "scripts": {
+      "dev": "vercel dev",
+      "start": "vercel start",
+      "build": "vercel build"
+    },
+    "keywords": [],
+    "author": "Your Name",
+    "license": "ISC",
     "dependencies": {
-      "firebase-admin": "^11.0.0" // Adjust to the latest version if needed
+      "firebase-admin": "^11.0.0"
+    },
+    "devDependencies": {
+      "vercel": "^28.0.0"
     }
   }
+  
