@@ -1,24 +1,38 @@
-let lastFeeding = {
-    side: "Nenhum",
-    date: null
-};
+import fs from 'fs';
+import path from 'path';
+
+const dbFilePath = path.join(process.cwd(), 'db.txt');
 
 export default function handler(req, res) {
     if (req.method === 'GET') {
-        if (!lastFeeding.date) {
+        // Verifica se o arquivo db.txt existe
+        if (!fs.existsSync(dbFilePath)) {
             return res.status(200).json(null);
         }
 
-        const lastFeedingTime = new Date(lastFeeding.date);
-        const currentTime = new Date();
-        const timeDifference = (currentTime - lastFeedingTime) / 1000;
+        // Lê o arquivo db.txt
+        fs.readFile(dbFilePath, 'utf8', (err, data) => {
+            if (err) {
+                return res.status(500).json({ message: 'Erro ao ler o banco de dados' });
+            }
 
-        const remainingTime = Math.max(3 * 60 * 60 - timeDifference, 0);
+            const lastFeeding = JSON.parse(data);
 
-        res.status(200).json({
-            lado: lastFeeding.side,
-            date: lastFeeding.date,
-            remaining_time: remainingTime
+            if (!lastFeeding.date) {
+                return res.status(200).json(null);
+            }
+
+            const lastFeedingTime = new Date(lastFeeding.date);
+            const currentTime = new Date();
+            const timeDifference = (currentTime - lastFeedingTime) / 1000;
+
+            const remainingTime = Math.max(3 * 60 * 60 - timeDifference, 0);
+
+            res.status(200).json({
+                lado: lastFeeding.side,
+                date: lastFeeding.date,
+                remaining_time: remainingTime
+            });
         });
     }
 }
