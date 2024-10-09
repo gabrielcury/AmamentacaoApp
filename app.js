@@ -117,6 +117,13 @@ function setNotification(remainingTime) {
             showNotification("Alerta de Alimentação", "Faltam 5 minutos para a próxima alimentação!");
         }, (remainingTime - 300) * 1000); // Convert remaining time to milliseconds
     }
+
+    if (remainingTime <= 60) {
+        // Set a timeout to trigger the notification
+        setTimeout(() => {
+            showNotification("Alerta de Alimentação", "Falta 1 minutos para a próxima alimentação!");
+        }, (remainingTime - 60) * 1000); // Convert remaining time to milliseconds
+    }
 }
 
 function showNotification(title, body) {
