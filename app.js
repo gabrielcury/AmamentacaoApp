@@ -1,10 +1,16 @@
 $(document).ready(function () {
+    // Request notification permission on app load
+    requestNotificationPermission();
+
+    // Initialize the interface with saved data
     loadLastFeeding();
 
+    // Event to register the left side
     $("#btn-esquerdo").on("click", function () {
         handleFeeding('Esquerdo');
     });
 
+    // Event to register the right side
     $("#btn-direito").on("click", function () {
         handleFeeding('Direito');
     });
@@ -117,13 +123,6 @@ function setNotification(remainingTime) {
             showNotification("Alerta de Alimentação", "Faltam 5 minutos para a próxima alimentação!");
         }, (remainingTime - 300) * 1000); // Convert remaining time to milliseconds
     }
-
-    if (remainingTime <= 60) {
-        // Set a timeout to trigger the notification
-        setTimeout(() => {
-            showNotification("Alerta de Alimentação", "Falta 1 minutos para a próxima alimentação!");
-        }, (remainingTime - 60) * 1000); // Convert remaining time to milliseconds
-    }
 }
 
 function showNotification(title, body) {
@@ -134,6 +133,20 @@ function showNotification(title, body) {
             if (permission === "granted") {
                 new Notification(title, { body });
             }
+        });
+    }
+}
+
+function requestNotificationPermission() {
+    if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+            } else {
+                console.log("Notification permission denied.");
+            }
+        }).catch(error => {
+            console.error("Error requesting notification permission:", error);
         });
     }
 }
