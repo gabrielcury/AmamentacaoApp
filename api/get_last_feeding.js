@@ -1,18 +1,19 @@
 import admin from 'firebase-admin';
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY); // Add your Firebase service account key to environment variables
+// Parse the service account key from environment variable
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: 'https://amamentacao.firebaseio.com', // Replace with your database URL
     });
 }
 
 const db = admin.firestore();
- 
+
 export default async function handler(req, res) {
     if (req.method === 'GET') {
+        // Set cache headers
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Expires', '0');
         res.setHeader('Pragma', 'no-cache');
