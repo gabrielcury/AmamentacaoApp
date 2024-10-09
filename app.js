@@ -1,4 +1,8 @@
 $(document).ready(function () {
+
+    // Request notification permission on app load
+    requestNotificationPermission();    
+
     loadLastFeeding();
 
     $("#btn-esquerdo").on("click", function () {
