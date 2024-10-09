@@ -1,13 +1,10 @@
 $(document).ready(function () {
-    // Inicializa a interface com os dados salvos
     loadLastFeeding();
 
-    // Evento para registrar o lado esquerdo
     $("#btn-esquerdo").on("click", function () {
         handleFeeding('Esquerdo');
     });
 
-    // Evento para registrar o lado direito
     $("#btn-direito").on("click", function () {
         handleFeeding('Direito');
     });
@@ -80,6 +77,7 @@ function loadLastFeeding() {
 
                 if (data.remaining_time > 0) {
                     startCountdown(data.remaining_time);
+                    setNotification(data.remaining_time);
                 } else {
                     $("#countdown").text('Tempo esgotado!');
                 }
@@ -109,4 +107,26 @@ function startCountdown(seconds) {
             $("#countdown").text(`${hours}h ${minutes}m ${secs}s`);
         }
     }, 1000);
+}
+
+function setNotification(remainingTime) {
+    // Check if there are 5 minutes (300 seconds) remaining
+    if (remainingTime <= 300) {
+        // Set a timeout to trigger the notification
+        setTimeout(() => {
+            showNotification("Alerta de Alimentação", "Faltam 5 minutos para a próxima alimentação!");
+        }, (remainingTime - 300) * 1000); // Convert remaining time to milliseconds
+    }
+}
+
+function showNotification(title, body) {
+    if (Notification.permission === "granted") {
+        new Notification(title, { body });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                new Notification(title, { body });
+            }
+        });
+    }
 }
