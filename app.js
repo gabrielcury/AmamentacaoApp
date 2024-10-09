@@ -1,3 +1,14 @@
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function(error) {
+            console.error('Service Worker registration failed:', error);
+        });
+}
+
+
 $(document).ready(function () {
     loadLastFeeding();
 
@@ -100,6 +111,7 @@ function startCountdown(seconds) {
         if (seconds <= 0) {
             clearInterval(window.countdownInterval);
             $("#countdown").text('Tempo esgotado!');
+            sendPushNotification("Tempo esgotado!", "O tempo para a próxima alimentação se esgotou.");
         } else {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -108,6 +120,19 @@ function startCountdown(seconds) {
         }
     }, 1000);
 }
+
+function sendPushNotification(title, body) {
+    // Aqui você deve configurar a lógica para enviar a notificação
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(function(registration) {
+            registration.showNotification(title, {
+                body: body,
+                icon: 'icons/icon-192x192.png'
+            });
+        });
+    }
+}
+
 
 function setNotification(remainingTime) {
     // Check if there are 5 minutes (300 seconds) remaining
